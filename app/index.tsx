@@ -1,19 +1,30 @@
 import { LinkRepository } from "@/src/storage";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
+import { useState } from "react";
 import { FlatList, Text, View } from "react-native";
-import { AnimatedFAB, List } from "react-native-paper";
+import { AnimatedFAB, Chip, List } from "react-native-paper";
 import { useQuery } from "react-query";
 
 export default function Index() {
   const router = useRouter();
   const db = useSQLiteContext();
   const query = useQuery("allLinks", () => LinkRepository.getAllLinks(db));
+  const [showRead, setShowRead] = useState(false);
+  const [showUnread, setShowUnread] = useState(true);
 
   console.log(query.data);
 
   return (
-    <View className="flex-1">
+    <View className="flex-1 p-4">
+      <View className="flex flex-row gap-2">
+        <Chip onPress={() => setShowRead(!showRead)} selected={showRead}>
+          Read
+        </Chip>
+        <Chip onPress={() => setShowUnread(!showUnread)} selected={showUnread}>
+          Unread
+        </Chip>
+      </View>
       {query.isLoading && <Text>Loading...</Text>}
       {query.data && (
         <FlatList

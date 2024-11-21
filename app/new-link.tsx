@@ -9,7 +9,7 @@ import { View } from "react-native";
 import { Button, RadioButton, Text, TextInput } from "react-native-paper";
 
 export default function NewLink() {
-  // MARK: hooks
+  /* -------------------------------- Hooks --------------------------------- */
   const db = useSQLiteContext();
   const [url, setUrl] = React.useState("");
   const [status, setStatus] = React.useState<LinkEntity["status"]>("read");
@@ -17,8 +17,7 @@ export default function NewLink() {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
 
-  // MARK: functions
-
+  /* ------------------------------ Functions ------------------------------- */
   const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate || date;
     setShowDatePicker(false);
@@ -31,19 +30,19 @@ export default function NewLink() {
     setDate(currentTime);
   };
 
-  // MARK: view
-
+  /* --------------------------------- View --------------------------------- */
   return (
     <View className="p-4 flex flex-col gap-5">
-      {/* MARK: url */}
+      {/* URL */}
       <TextInput
         label="URL"
         value={url}
         placeholder="Enter URL"
         onChangeText={(text) => setUrl(text)}
+        autoFocus
       />
 
-      {/* MARK: status radio */}
+      {/* Status radio */}
       <View>
         <Text variant="titleMedium">Status</Text>
         <RadioButton.Group
@@ -59,7 +58,7 @@ export default function NewLink() {
         <React.Fragment>
           <Text variant="titleMedium">Read at</Text>
           <View className="flex flex-row gap-4">
-            {/* MARK: date select */}
+            {/* Date select */}
             <Button
               icon="calendar-edit"
               mode="outlined"
@@ -74,7 +73,7 @@ export default function NewLink() {
                 onChange={onChangeDate}
               />
             )}
-            {/* MARK: time select */}
+            {/* Time select */}
             <Button
               icon="clock-edit-outline"
               mode="outlined"

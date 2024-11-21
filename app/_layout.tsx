@@ -1,20 +1,49 @@
+import {
+  DarkTheme as NavigationDarkTheme,
+  DefaultTheme as NavigationDefaultTheme,
+  ThemeProvider,
+} from "@react-navigation/native";
+import merge from "deepmerge";
 import { Stack } from "expo-router";
 import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
-import { PaperProvider } from "react-native-paper";
+import { StatusBar } from "expo-status-bar";
+import { useColorScheme } from "react-native";
+import {
+  MD3DarkTheme,
+  MD3LightTheme,
+  PaperProvider,
+  adaptNavigationTheme,
+} from "react-native-paper";
 import { QueryClient, QueryClientProvider } from "react-query";
 import "./global.css";
 
 const queryClient = new QueryClient();
 
+const { LightTheme, DarkTheme } = adaptNavigationTheme({
+  reactNavigationLight: NavigationDefaultTheme,
+  reactNavigationDark: NavigationDarkTheme,
+});
+
+const CombinedDefaultTheme = merge(MD3LightTheme, LightTheme);
+const CombinedDarkTheme = merge(MD3DarkTheme, DarkTheme);
+
 export default function RootLayout() {
+  const colorScheme = useColorScheme();
+  const paperTheme =
+    colorScheme === "dark" ? CombinedDarkTheme : CombinedDefaultTheme;
+
   return (
     <SQLiteProvider databaseName="readtrack.db" onInit={migrateDbIfNeeded}>
       <QueryClientProvider client={queryClient}>
-        <PaperProvider>
-          <Stack>
-            <Stack.Screen name="index" options={{ title: "Home" }} />
-            <Stack.Screen name="new-link" options={{ title: "New Link" }} />
-          </Stack>
+        <PaperProvider theme={paperTheme}>
+          {/* @ts-ignore */}
+          <ThemeProvider value={paperTheme}>
+            <StatusBar />
+            <Stack>
+              <Stack.Screen name="index" options={{ title: "Home" }} />
+              <Stack.Screen name="new-link" options={{ title: "New Link" }} />
+            </Stack>
+          </ThemeProvider>
         </PaperProvider>
       </QueryClientProvider>
     </SQLiteProvider>
