@@ -1,15 +1,18 @@
+import { LinkEntity, LinkRepository } from "@/src/storage";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
+import { useSQLiteContext } from "expo-sqlite";
 import React, { useState } from "react";
 import { View } from "react-native";
 import { Button, RadioButton, Text, TextInput } from "react-native-paper";
 
 export default function NewLink() {
   // MARK: hooks
+  const db = useSQLiteContext();
   const [url, setUrl] = React.useState("");
-  const [status, setStatus] = React.useState("read");
+  const [status, setStatus] = React.useState<LinkEntity["status"]>("read");
   const [date, setDate] = React.useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -44,7 +47,7 @@ export default function NewLink() {
       <View>
         <Text variant="titleMedium">Status</Text>
         <RadioButton.Group
-          onValueChange={(newValue) => setStatus(newValue)}
+          onValueChange={(newValue) => setStatus(newValue as any)}
           value={status}
         >
           <RadioButton.Item label="Read" value="read" />
@@ -90,7 +93,14 @@ export default function NewLink() {
         </React.Fragment>
       )}
 
-      <Button mode="contained">Save</Button>
+      <Button
+        mode="contained"
+        onPress={() => {
+          LinkRepository.saveLink(db, url, status, date);
+        }}
+      >
+        Save
+      </Button>
     </View>
   );
 }

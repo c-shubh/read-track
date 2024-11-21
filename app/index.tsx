@@ -1,12 +1,26 @@
-import { Link, useNavigation, useRouter } from "expo-router";
-import { Text, View } from "react-native";
-import { AnimatedFAB } from "react-native-paper";
+import { LinkRepository } from "@/src/storage";
+import { useRouter } from "expo-router";
+import { useSQLiteContext } from "expo-sqlite";
+import { FlatList, Text, View } from "react-native";
+import { AnimatedFAB, List } from "react-native-paper";
+import { useQuery } from "react-query";
 
 export default function Index() {
   const router = useRouter();
+  const db = useSQLiteContext();
+  const query = useQuery("allLinks", () => LinkRepository.getAllLinks(db));
+
+  console.log(query.data);
+
   return (
     <View className="flex-1">
-      <Text>Edit app/index.tsx to edit this screen.</Text>
+      {query.isLoading && <Text>Loading...</Text>}
+      {query.data && (
+        <FlatList
+          data={query.data}
+          renderItem={({ item }) => <List.Item title={item.url} />}
+        />
+      )}
       <AnimatedFAB
         icon={"plus"}
         extended={false}
