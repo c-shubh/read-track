@@ -5,13 +5,7 @@ import { AnimatedFAB } from "react-native-paper";
 export default function Index() {
   const router = useRouter();
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
+    <View className="flex-1">
       <Text>Edit app/index.tsx to edit this screen.</Text>
       <AnimatedFAB
         icon={"plus"}
@@ -19,7 +13,7 @@ export default function Index() {
         label={"New Link"}
         iconMode={"static"}
         onPress={() => router.push("/new-link")}
-        style={{ bottom: 16, right: 16, position: "absolute" }}
+        className="absolute bottom-4 right-4"
       />
     </View>
   );
