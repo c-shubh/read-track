@@ -22,6 +22,8 @@ export default function NewLink() {
         onChangeText={(text) => setUrl(text)}
       />
 
+      <Text className="text-3xl font-bold underline">adfasdf</Text>
+
       <View>
         <Text variant="titleMedium">Status</Text>
         <RadioButton.Group
