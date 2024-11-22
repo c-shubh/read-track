@@ -3,7 +3,7 @@ import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import { useState } from "react";
 import { FlatList, Text, View } from "react-native";
-import { AnimatedFAB, Chip, List } from "react-native-paper";
+import { AnimatedFAB, Button, Chip, List } from "react-native-paper";
 import { useQuery } from "react-query";
 import { routes } from "../routes";
 
@@ -13,10 +13,13 @@ export default function Index() {
   const allLinksQuery = useQuery(["links"], () =>
     LinkRepository.getAllLinks(db)
   );
+  const allLinksJoinedMetadataQuery = useQuery(["links", "metadata"], () =>
+    LinkRepository.getAllLinksJoinedMetadata(db)
+  );
   const [showRead, setShowRead] = useState(false);
   const [showUnread, setShowUnread] = useState(true);
 
-  console.log(allLinksQuery.data);
+  console.log(allLinksJoinedMetadataQuery.data);
 
   return (
     <View className="flex-1 p-4 gap-4">
@@ -29,6 +32,16 @@ export default function Index() {
           Unread
         </Chip>
       </View>
+      {
+        // TODO: remove this later
+      }
+      <Button
+        mode="contained"
+        icon={"database-cog-outline"}
+        onPress={() => router.push(routes.dbDebug.url)}
+      >
+        Db Debug
+      </Button>
       {/* List / Loading */}
       {allLinksQuery.isLoading && <Text>Loading...</Text>}
       {allLinksQuery.data && (

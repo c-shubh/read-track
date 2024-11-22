@@ -49,6 +49,10 @@ export default function RootLayout() {
                 name={routes.newLink.name}
                 options={{ title: routes.newLink.title }}
               />
+              <Stack.Screen
+                name={routes.dbDebug.name}
+                options={{ title: routes.dbDebug.title }}
+              />
             </Stack>
           </ThemeProvider>
         </PaperProvider>
@@ -71,13 +75,21 @@ async function migrateDbIfNeeded(db: SQLiteDatabase) {
   }
   if (currentDbVersion === 0) {
     await db.execAsync(`
-PRAGMA journal_mode = 'wal';
+PRAGMA journal_mode = WAL;
+PRAGMA foreign_keys = ON;
 CREATE TABLE links (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	url TEXT NOT NULL,
 	status TEXT CHECK(status in ('read', 'later')) NOT NULL,
-	read_at datetime,
-	created_at datetime NOT NULL
+	read_at datetime, -- js iso date string
+	created_at datetime NOT NULL -- js iso date string
+);
+CREATE TABLE link_metadata (
+	id INTEGER PRIMARY KEY AUTOINCREMENT,
+	link_id INTEGER NOT NULL,
+	title TEXT,
+	metadata_updated_at datetime NOT NULL, -- js iso date string
+	FOREIGN KEY (link_id) REFERENCES links (id) ON DELETE CASCADE
 );
 `);
     currentDbVersion = 1;
