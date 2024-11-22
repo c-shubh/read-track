@@ -60,7 +60,12 @@ export default function Index() {
         <FlatList
           data={query?.data}
           renderItem={({ item }) => (
-            <List.Item title={item.title} description={item.url} />
+            <List.Item
+              // if title is not present, show url as title
+              title={item.title || item.url}
+              // only show description if title is present
+              description={item.title && item.url}
+            />
           )}
         />
       )}
