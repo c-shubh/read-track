@@ -1,62 +1,13 @@
 import { SQLiteDatabase } from "expo-sqlite";
-import { parse } from "node-html-parser";
 import { seedData } from "./constants";
-
-// the way it's stored in the db
-export type LinkEntity = {
-  id: number;
-  url: string;
-  status: "read" | "later";
-  read_at: string | null;
-  created_at: string;
-};
-
-export type LinkMetadataEntity = {
-  id: number;
-  link_id: number;
-  title: string | null;
-  metadata_updated_at: string;
-};
-
-export interface GetAllLinksJoinedMetadataOut {
-  created_at: string;
-  link_id: number;
-  metadata_id: number;
-  metadata_updated_at: string;
-  // read_at:
-  // status:
-  // title:
-  // url:
-}
-
-export interface FetchedMetadata {
-  title: string | null;
-}
-
-function extractTitle(html: string): string | null {
-  const root = parse(html);
-  return root.querySelector("head > title")?.text.trim() || null;
-}
-
-export async function fetchUrlMetadata(url: string): Promise<FetchedMetadata> {
-  try {
-    const html = await fetch(url, { method: "GET" }).then((res) => res.text());
-    return {
-      title: extractTitle(html) || null,
-    };
-  } catch (e) {
-    console.error("fetchUrlMetadata", e);
-    return {
-      title: null,
-    };
-  }
-}
+import { FetchUrlMetadataOut, LinkEntity, LinkMetadataEntity } from "./types";
+import { fetchUrlMetadata } from "./utils";
 
 export class LinkMetadataRepository {
   static insertMetadata(
     db: SQLiteDatabase,
     linkId: number,
-    metadata: FetchedMetadata
+    metadata: FetchUrlMetadataOut
   ) {
     return db.runAsync(
       `
@@ -99,11 +50,36 @@ SELECT id, url, status, read_at, created_at FROM links;`);
 
   static async clearDbAndSeedData(db: SQLiteDatabase) {
     await this.deleteAllLinks(db);
+
+    const metadataFetchPromises: Promise<{
+      insertedId: number;
+      metadata: FetchUrlMetadataOut;
+    }>[] = [];
     for (const { url, status, read_at } of seedData) {
+      let insertedId: number;
       if (status === "read" && read_at != null)
-        await this.saveReadLink(db, url, status, new Date(read_at));
-      else if (status === "later") await this.saveLaterLink(db, url, status);
+        insertedId = (
+          await this.saveReadLink(db, url, status, new Date(read_at))
+        ).lastInsertRowId;
+      else if (status === "later")
+        insertedId = (await this.saveLaterLink(db, url, status))
+          .lastInsertRowId;
       else throw new Error("Unreachable");
+
+      metadataFetchPromises.push(
+        new Promise((resolve, reject) => {
+          fetchUrlMetadata(url).then((metadata) =>
+            resolve({
+              insertedId,
+              metadata,
+            })
+          );
+        })
+      );
+    }
+    const metadatas = await Promise.all(metadataFetchPromises);
+    for (const { insertedId, metadata } of metadatas) {
+      await LinkMetadataRepository.insertMetadata(db, insertedId, metadata);
     }
   }
 

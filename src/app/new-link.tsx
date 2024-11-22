@@ -1,10 +1,4 @@
-import {
-  FetchedMetadata,
-  fetchUrlMetadata,
-  LinkEntity,
-  LinkMetadataRepository,
-  LinkRepository,
-} from "@/src/storage";
+import { LinkMetadataRepository, LinkRepository } from "@/src/storage";
 import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
@@ -15,18 +9,12 @@ import React, { useState } from "react";
 import { ToastAndroid, View } from "react-native";
 import { Button, RadioButton, Text, TextInput } from "react-native-paper";
 import { useMutation, useQueryClient } from "react-query";
-import { showToast } from "../utils";
-
-interface LinkData {
-  url: string;
-  status: LinkEntity["status"];
-  date: Date;
-}
-
-interface SaveMetadataMutationFnIn {
-  linkId: number;
-  metadata: FetchedMetadata;
-}
+import {
+  LinkEntity,
+  SaveLinkMutationFnIn,
+  SaveMetadataMutationFnIn,
+} from "../types";
+import { fetchUrlMetadata, showToast } from "../utils";
 
 export default function NewLink() {
   /* -------------------------------- Hooks --------------------------------- */
@@ -41,13 +29,18 @@ export default function NewLink() {
   const router = useRouter();
   const queryClient = useQueryClient();
   const saveLinkMutation = useMutation({
-    mutationFn: (data: LinkData) => saveLinkMutationFn(db, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["links"] }),
-  });
-  const saveMetadataMutation = useMutation({
-    mutationFn: (data: SaveMetadataMutationFnIn) =>
-      saveMetadataMutationFn(db, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["metadata"] }),
+    mutationFn: (data: SaveLinkMutationFnIn) => saveLinkMutationFn(db, data),
+    onSuccess: async (data) => {
+      queryClient.invalidateQueries({ queryKey: ["links"] });
+      showToast("Link saved successfully.", ToastAndroid.SHORT);
+      router.back();
+      const metadata = await fetchUrlMetadata(url);
+      await saveMetadataMutationFn(db, {
+        linkId: data.lastInsertRowId,
+        metadata,
+      });
+      queryClient.invalidateQueries({ queryKey: ["links", "metadata"] });
+    },
   });
 
   /* ------------------------------ Functions ------------------------------- */
@@ -61,7 +54,7 @@ export default function NewLink() {
 
   const saveLinkMutationFn = (
     db: SQLiteDatabase,
-    { url, status, date }: LinkData
+    { url, status, date }: SaveLinkMutationFnIn
   ) => {
     if (status === "read")
       return LinkRepository.saveReadLink(db, url, status, date);
@@ -84,33 +77,7 @@ export default function NewLink() {
 
   const saveLink = async () => {
     //  TODO: Validate
-    saveLinkMutation.mutate(
-      { date, status, url },
-      {
-        async onSuccess(data) {
-          showToast("Link saved successfully.", ToastAndroid.SHORT);
-          router.back();
-
-          // fetch metadata and insert into table
-          const insertedId = data.lastInsertRowId;
-          const metadata = await fetchUrlMetadata(url);
-          // insert metadata into table
-          saveMetadataMutation.mutate(
-            { linkId: insertedId, metadata },
-            {
-              onSuccess: () =>
-                showToast(
-                  "Fetched metadata saved successfully.",
-                  ToastAndroid.SHORT
-                ),
-            }
-          );
-        },
-      }
-    );
-
-    if (saveLinkMutation.isSuccess) {
-    }
+    saveLinkMutation.mutate({ date, status, url });
   };
 
   /* --------------------------------- View --------------------------------- */

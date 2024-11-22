@@ -23,7 +23,7 @@ export default function DbDebug() {
       return LinkRepository.clearDbAndSeedData(db);
     },
     onSuccess() {
-      queryClient.invalidateQueries(["links"]);
+      queryClient.invalidateQueries(["links", "metadata"]);
       showToast("Seeded data", ToastAndroid.SHORT);
     },
   });
