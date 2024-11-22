@@ -10,14 +10,17 @@ import { routes } from "../routes";
 export default function Index() {
   const router = useRouter();
   const db = useSQLiteContext();
-  const query = useQuery("allLinks", () => LinkRepository.getAllLinks(db));
+  const allLinksQuery = useQuery(["links"], () =>
+    LinkRepository.getAllLinks(db)
+  );
   const [showRead, setShowRead] = useState(false);
   const [showUnread, setShowUnread] = useState(true);
 
-  console.log(query.data);
+  console.log(allLinksQuery.data);
 
   return (
-    <View className="flex-1 p-4">
+    <View className="flex-1 p-4 gap-4">
+      {/* Chips */}
       <View className="flex flex-row gap-2">
         <Chip onPress={() => setShowRead(!showRead)} selected={showRead}>
           Read
@@ -26,13 +29,16 @@ export default function Index() {
           Unread
         </Chip>
       </View>
-      {query.isLoading && <Text>Loading...</Text>}
-      {query.data && (
+      {/* List / Loading */}
+      {allLinksQuery.isLoading && <Text>Loading...</Text>}
+      {allLinksQuery.data && (
         <FlatList
-          data={query.data}
+          data={allLinksQuery.data}
           renderItem={({ item }) => <List.Item title={item.url} />}
         />
       )}
+
+      {/* FAB (it's out of the normal element flow) */}
       <AnimatedFAB
         icon={"plus"}
         extended={false}

@@ -15,8 +15,8 @@ import {
   adaptNavigationTheme,
 } from "react-native-paper";
 import { QueryClient, QueryClientProvider } from "react-query";
-import "./global.css";
 import { routes } from "../routes";
+import "./global.css";
 
 const queryClient = new QueryClient();
 

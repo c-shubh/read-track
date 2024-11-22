@@ -3,10 +3,19 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
+import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
 import React, { useState } from "react";
-import { View } from "react-native";
+import { ToastAndroid, View } from "react-native";
 import { Button, RadioButton, Text, TextInput } from "react-native-paper";
+import { useMutation, useQueryClient } from "react-query";
+import { showToast } from "../utils";
+
+interface LinkData {
+  url: string;
+  status: LinkEntity["status"];
+  date: Date;
+}
 
 export default function NewLink() {
   /* -------------------------------- Hooks --------------------------------- */
@@ -16,6 +25,16 @@ export default function NewLink() {
   const [date, setDate] = React.useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const router = useRouter();
+  const queryClient = useQueryClient();
+  const saveLinkMutation = useMutation({
+    mutationFn({ url, status, date }: LinkData) {
+      return LinkRepository.saveLink(db, url, status, date);
+    },
+    onSuccess() {
+      return queryClient.invalidateQueries({ queryKey: ["links"] });
+    },
+  });
 
   /* ------------------------------ Functions ------------------------------- */
   const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
@@ -28,6 +47,23 @@ export default function NewLink() {
     const currentTime = selectedTime || date;
     setShowTimePicker(false);
     setDate(currentTime);
+  };
+
+  const saveLink = () => {
+    //  TODO: Validate
+    saveLinkMutation.mutate(
+      {
+        date,
+        status,
+        url,
+      },
+      {
+        onSuccess() {
+          showToast("Link saved successfully.", ToastAndroid.SHORT);
+          router.back();
+        },
+      }
+    );
   };
 
   /* --------------------------------- View --------------------------------- */
@@ -92,12 +128,7 @@ export default function NewLink() {
         </React.Fragment>
       )}
 
-      <Button
-        mode="contained"
-        onPress={() => {
-          LinkRepository.saveLink(db, url, status, date);
-        }}
-      >
+      <Button mode="contained" onPress={saveLink}>
         Save
       </Button>
     </View>

@@ -49,4 +49,10 @@ VALUES (?, ?, ?);
     }
     throw new Error("Unreachable");
   }
+
+  static async deleteAllLinks(db: SQLiteDatabase) {
+    const ret = await db.runAsync(`DELETE FROM links;`);
+    console.log("[DB] deleted all links");
+    return ret;
+  }
 }
