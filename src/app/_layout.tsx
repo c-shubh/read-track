@@ -16,6 +16,7 @@ import {
 } from "react-native-paper";
 import { QueryClient, QueryClientProvider } from "react-query";
 import "./global.css";
+import { routes } from "../routes";
 
 const queryClient = new QueryClient();
 
@@ -40,8 +41,14 @@ export default function RootLayout() {
           <ThemeProvider value={paperTheme}>
             <StatusBar />
             <Stack>
-              <Stack.Screen name="index" options={{ title: "Home" }} />
-              <Stack.Screen name="new-link" options={{ title: "New Link" }} />
+              <Stack.Screen
+                name={routes.index.name}
+                options={{ title: routes.index.title }}
+              />
+              <Stack.Screen
+                name={routes.newLink.name}
+                options={{ title: routes.newLink.title }}
+              />
             </Stack>
           </ThemeProvider>
         </PaperProvider>

@@ -5,6 +5,7 @@ import { useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { AnimatedFAB, Chip, List } from "react-native-paper";
 import { useQuery } from "react-query";
+import { routes } from "../routes";
 
 export default function Index() {
   const router = useRouter();
@@ -37,7 +38,7 @@ export default function Index() {
         extended={false}
         label={"New Link"}
         iconMode={"static"}
-        onPress={() => router.push("/new-link")}
+        onPress={() => router.push(routes.newLink.url)}
         className="absolute bottom-4 right-4"
       />
     </View>
