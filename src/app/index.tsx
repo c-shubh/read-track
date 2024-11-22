@@ -13,8 +13,25 @@ export default function Index() {
   const allLinksJoinedMetadataQuery = useQuery(["links", "metadata"], () =>
     LinkRepository.getAllLinksJoinedMetadata(db)
   );
+  const readLinksJoinedMetadataQuery = useQuery(
+    ["links", "metadata", "read"],
+    () => LinkRepository.getReadLinksJoinedMetadata(db)
+  );
+  const laterLinksJoinedMetadataQuery = useQuery(
+    ["links", "metadata", "later"],
+    () => LinkRepository.getLaterLinksJoinedMetadata(db)
+  );
   const [showRead, setShowRead] = useState(false);
   const [showUnread, setShowUnread] = useState(true);
+
+  const query =
+    showRead && showUnread
+      ? allLinksJoinedMetadataQuery
+      : showRead
+      ? readLinksJoinedMetadataQuery
+      : showUnread
+      ? laterLinksJoinedMetadataQuery
+      : null;
 
   return (
     <View className="flex-1 p-4 gap-4">
@@ -38,10 +55,10 @@ export default function Index() {
         Db Debug
       </Button>
       {/* List / Loading */}
-      {allLinksJoinedMetadataQuery.isLoading && <Text>Loading...</Text>}
-      {allLinksJoinedMetadataQuery.data && (
+      {query?.isLoading && <Text>Loading...</Text>}
+      {query?.data && (
         <FlatList
-          data={allLinksJoinedMetadataQuery.data}
+          data={query?.data}
           renderItem={({ item }) => (
             <List.Item title={item.title} description={item.url} />
           )}

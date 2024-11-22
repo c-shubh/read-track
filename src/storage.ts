@@ -21,7 +21,7 @@ VALUES (?, ?, ?);`,
 }
 
 export class LinkRepository {
-  static async getAllLinksJoinedMetadata(db: SQLiteDatabase) {
+  static getAllLinksJoinedMetadata(db: SQLiteDatabase) {
     return db.getAllAsync<{
       link_id: LinkEntity["id"];
       url: LinkEntity["url"];
@@ -36,6 +36,46 @@ SELECT links.id link_id, links.url, links.status, links.read_at, links.created_a
        link_metadata.id metadata_id, link_metadata.title, link_metadata.metadata_updated_at
 FROM links
 LEFT JOIN link_metadata ON links.id = link_metadata.link_id;
+`);
+  }
+
+  static getReadLinksJoinedMetadata(db: SQLiteDatabase) {
+    return db.getAllAsync<{
+      link_id: LinkEntity["id"];
+      url: LinkEntity["url"];
+      // ALERT: typescript won't catch this if LinkEntity["status"] changes
+      status: "read";
+      read_at: LinkEntity["read_at"];
+      created_at: LinkEntity["created_at"];
+      metadata_id: number | null;
+      title: LinkMetadataEntity["title"] | null;
+      metadata_updated_at: LinkMetadataEntity["metadata_updated_at"] | null;
+    }>(`
+SELECT links.id link_id, links.url, links.status, links.read_at, links.created_at, 
+     link_metadata.id metadata_id, link_metadata.title, link_metadata.metadata_updated_at
+FROM links
+LEFT JOIN link_metadata ON links.id = link_metadata.link_id
+WHERE links.status = 'read';
+`);
+  }
+
+  static getLaterLinksJoinedMetadata(db: SQLiteDatabase) {
+    return db.getAllAsync<{
+      link_id: LinkEntity["id"];
+      url: LinkEntity["url"];
+      // ALERT: typescript won't catch this if LinkEntity["status"] changes
+      status: "later";
+      read_at: LinkEntity["read_at"];
+      created_at: LinkEntity["created_at"];
+      metadata_id: number | null;
+      title: LinkMetadataEntity["title"] | null;
+      metadata_updated_at: LinkMetadataEntity["metadata_updated_at"] | null;
+    }>(`
+SELECT links.id link_id, links.url, links.status, links.read_at, links.created_at, 
+     link_metadata.id metadata_id, link_metadata.title, link_metadata.metadata_updated_at
+FROM links
+LEFT JOIN link_metadata ON links.id = link_metadata.link_id
+WHERE links.status = 'later';
 `);
   }
 

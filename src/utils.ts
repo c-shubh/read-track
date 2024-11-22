@@ -14,6 +14,7 @@ function extractTitle(html: string): string | null {
 export async function fetchUrlMetadata(
   url: string
 ): Promise<FetchUrlMetadataOut> {
+  // TODO: avoid fetching large pdfs, etc.
   try {
     const html = await fetch(url, { method: "GET" }).then((res) => res.text());
     return {
