@@ -5,6 +5,7 @@ import {
 } from "@react-navigation/native";
 import merge from "deepmerge";
 import { Stack } from "expo-router";
+import { ShareIntentProvider, useShareIntent } from "expo-share-intent";
 import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "react-native";
@@ -34,30 +35,32 @@ export default function RootLayout() {
     colorScheme === "dark" ? CombinedDarkTheme : CombinedDefaultTheme;
 
   return (
-    <SQLiteProvider databaseName="readtrack.db" onInit={migrateDbIfNeeded}>
-      <QueryClientProvider client={queryClient}>
-        <PaperProvider theme={paperTheme}>
-          {/* @ts-ignore */}
-          <ThemeProvider value={paperTheme}>
-            <StatusBar />
-            <Stack>
-              <Stack.Screen
-                name={routes.index.name}
-                options={{ title: routes.index.title }}
-              />
-              <Stack.Screen
-                name={routes.newLink.name}
-                options={{ title: routes.newLink.title }}
-              />
-              <Stack.Screen
-                name={routes.dbDebug.name}
-                options={{ title: routes.dbDebug.title }}
-              />
-            </Stack>
-          </ThemeProvider>
-        </PaperProvider>
-      </QueryClientProvider>
-    </SQLiteProvider>
+    <ShareIntentProvider>
+      <SQLiteProvider databaseName="readtrack.db" onInit={migrateDbIfNeeded}>
+        <QueryClientProvider client={queryClient}>
+          <PaperProvider theme={paperTheme}>
+            {/* @ts-ignore */}
+            <ThemeProvider value={paperTheme}>
+              <StatusBar />
+              <Stack>
+                <Stack.Screen
+                  name={routes.index.name}
+                  options={{ title: routes.index.title }}
+                />
+                <Stack.Screen
+                  name={routes.newLink.name}
+                  options={{ title: routes.newLink.title }}
+                />
+                <Stack.Screen
+                  name={routes.dbDebug.name}
+                  options={{ title: routes.dbDebug.title }}
+                />
+              </Stack>
+            </ThemeProvider>
+          </PaperProvider>
+        </QueryClientProvider>
+      </SQLiteProvider>
+    </ShareIntentProvider>
   );
 }
 
@@ -83,7 +86,8 @@ CREATE TABLE links (
 	status TEXT CHECK(status in ('read', 'later')) NOT NULL,
 	read_at datetime, -- js iso date string
 	created_at datetime NOT NULL -- js iso date string
-);
+);`);
+    await db.execAsync(`
 CREATE TABLE link_metadata (
 	id INTEGER PRIMARY KEY AUTOINCREMENT,
 	link_id INTEGER NOT NULL,

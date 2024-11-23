@@ -3,7 +3,7 @@ import DateTimePicker, {
   DateTimePickerEvent,
 } from "@react-native-community/datetimepicker";
 import dayjs from "dayjs";
-import { useRouter } from "expo-router";
+import { useLocalSearchParams, useRouter } from "expo-router";
 import { SQLiteDatabase, useSQLiteContext } from "expo-sqlite";
 import React, { useState } from "react";
 import { ToastAndroid, View } from "react-native";
@@ -21,7 +21,8 @@ export default function NewLink() {
 
   const db = useSQLiteContext();
   // TODO: remove default value
-  const [url, setUrl] = React.useState("https://cshubh.com");
+  const { url: sharedUrl } = useLocalSearchParams<{ url: string }>();
+  const [url, setUrl] = React.useState(sharedUrl || "https://cshubh.com");
   const [status, setStatus] = React.useState<LinkEntity["status"]>("read");
   const [date, setDate] = React.useState<Date>(new Date());
   const [showDatePicker, setShowDatePicker] = useState(false);

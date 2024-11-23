@@ -1,15 +1,20 @@
 import { LinkRepository } from "@/src/storage";
+import { useDrizzleStudio } from "expo-drizzle-studio-plugin";
 import { useRouter } from "expo-router";
 import { useSQLiteContext } from "expo-sqlite";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { AnimatedFAB, Button, Chip, List } from "react-native-paper";
 import { useQuery } from "react-query";
 import { routes } from "../routes";
+import { useShareIntentContext } from "expo-share-intent";
 
 export default function Index() {
+  const { hasShareIntent, shareIntent, resetShareIntent } =
+    useShareIntentContext();
   const router = useRouter();
   const db = useSQLiteContext();
+  useDrizzleStudio(db);
   const allLinksJoinedMetadataQuery = useQuery(["links", "metadata"], () =>
     LinkRepository.getAllLinksJoinedMetadata(db)
   );
@@ -23,7 +28,6 @@ export default function Index() {
   );
   const [showRead, setShowRead] = useState(false);
   const [showUnread, setShowUnread] = useState(true);
-
   const query =
     showRead && showUnread
       ? allLinksJoinedMetadataQuery
@@ -32,6 +36,22 @@ export default function Index() {
       : showUnread
       ? laterLinksJoinedMetadataQuery
       : null;
+
+  // Handle share intent navigation
+  useEffect(() => {
+    if (hasShareIntent && shareIntent.text) {
+      // Use a short timeout to ensure navigation happens after component mount
+      const timer = setTimeout(() => {
+        router.push({
+          pathname: routes.newLink.url,
+          params: { url: shareIntent.text },
+        });
+        resetShareIntent();
+      }, 100);
+
+      return () => clearTimeout(timer);
+    }
+  }, [hasShareIntent, shareIntent.text]);
 
   return (
     <View className="flex-1 p-4 gap-4">
