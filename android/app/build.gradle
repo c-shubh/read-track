@@ -86,9 +86,9 @@ android {
     buildToolsVersion rootProject.ext.buildToolsVersion
     compileSdk rootProject.ext.compileSdkVersion
 
-    namespace 'com.anonymous.readtrack'
+    namespace 'com.cshubh.readtrack'
     defaultConfig {
-        applicationId 'com.anonymous.readtrack'
+        applicationId 'com.cshubh.readtrack'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1

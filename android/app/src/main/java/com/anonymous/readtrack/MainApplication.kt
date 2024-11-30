@@ -1,4 +1,4 @@
-package com.anonymous.readtrack
+package com.cshubh.readtrack
 
 import android.app.Application
 import android.content.res.Configuration

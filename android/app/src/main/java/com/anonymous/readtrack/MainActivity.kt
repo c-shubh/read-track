@@ -1,4 +1,4 @@
-package com.anonymous.readtrack
+package com.cshubh.readtrack
 import expo.modules.splashscreen.SplashScreenManager
 
 import android.os.Build
