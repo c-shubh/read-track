@@ -4,11 +4,12 @@ import {
   ThemeProvider,
 } from "@react-navigation/native";
 import merge from "deepmerge";
-import { Stack } from "expo-router";
-import { ShareIntentProvider, useShareIntent } from "expo-share-intent";
+import Drawer from "expo-router/drawer";
+import { ShareIntentProvider } from "expo-share-intent";
 import { SQLiteDatabase, SQLiteProvider } from "expo-sqlite";
 import { StatusBar } from "expo-status-bar";
 import { useColorScheme } from "react-native";
+import { GestureHandlerRootView } from "react-native-gesture-handler";
 import {
   MD3DarkTheme,
   MD3LightTheme,
@@ -42,20 +43,19 @@ export default function RootLayout() {
             {/* @ts-ignore */}
             <ThemeProvider value={paperTheme}>
               <StatusBar />
-              <Stack>
-                <Stack.Screen
-                  name={routes.index.name}
-                  options={{ title: routes.index.title }}
-                />
-                <Stack.Screen
-                  name={routes.newLink.name}
-                  options={{ title: routes.newLink.title }}
-                />
-                <Stack.Screen
-                  name={routes.dbDebug.name}
-                  options={{ title: routes.dbDebug.title }}
-                />
-              </Stack>
+              {/* See: https://github.com/expo/router/discussions/715#discussioncomment-10827158 */}
+              <GestureHandlerRootView style={{ flex: 1 }}>
+                <Drawer screenOptions={{ headerShown: false }}>
+                  <Drawer.Screen
+                    name="(stacks)"
+                    options={{ drawerLabel: routes.index.title }}
+                  />
+                  <Drawer.Screen
+                    name="(settings)"
+                    options={{ drawerLabel: routes.settings.title }}
+                  />
+                </Drawer>
+              </GestureHandlerRootView>
             </ThemeProvider>
           </PaperProvider>
         </QueryClientProvider>

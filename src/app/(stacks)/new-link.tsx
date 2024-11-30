@@ -13,8 +13,8 @@ import {
   LinkEntity,
   SaveLinkMutationFnIn,
   SaveMetadataMutationFnIn,
-} from "../types";
-import { fetchUrlMetadata, showToast } from "../utils";
+} from "../../types";
+import { fetchUrlMetadata, showToast } from "../../utils";
 
 export default function NewLink() {
   /* -------------------------------- Hooks --------------------------------- */

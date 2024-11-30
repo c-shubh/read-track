@@ -6,7 +6,7 @@ import { useEffect, useState } from "react";
 import { FlatList, Text, View } from "react-native";
 import { AnimatedFAB, Button, Chip, List } from "react-native-paper";
 import { useQuery } from "react-query";
-import { routes } from "../routes";
+import { routes } from "../../routes";
 import { useShareIntentContext } from "expo-share-intent";
 
 export default function Index() {

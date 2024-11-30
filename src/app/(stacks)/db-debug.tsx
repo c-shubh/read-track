@@ -3,8 +3,8 @@ import React from "react";
 import { ToastAndroid, View } from "react-native";
 import { Button } from "react-native-paper";
 import { useMutation, useQueryClient } from "react-query";
-import { LinkRepository } from "../storage";
-import { showToast } from "../utils";
+import { LinkRepository } from "../../storage";
+import { showToast } from "../../utils";
 
 export default function DbDebug() {
   const db = useSQLiteContext();
