@@ -10,6 +10,19 @@
     "web": "expo start --web",
     "lint": "expo lint"
   },
+  "homepage": "https://github.com/c-shubh/read-track",
+  "author": {
+    "name": "Shubh A Chudasama",
+    "url": "https://cshubh.com"
+  },
+  "license": "AGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/c-shubh/read-track/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/c-shubh/read-track.git"
+  },
   "dependencies": {
     "@expo/vector-icons": "^14.0.2",
     "@react-native-community/datetimepicker": "8.2.0",

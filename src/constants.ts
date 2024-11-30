@@ -1,4 +1,4 @@
-import { LinkEntity } from "./storage";
+import { LinkEntity } from "./types";
 
 export const seedData: {
   url: string;
@@ -132,11 +132,6 @@ export const seedData: {
     created_at: "2024-11-17T05:27:36.000Z",
   },
   {
-    url: "https://accounts.google.com/InteractiveLogin/signinchooser?continue=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1srQ2MGSEwAh3tSUJ-FGmFvwoJMkYGslvMpZN3IwLSJg%2Fedit%3Fgid%3D399342770&followup=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1srQ2MGSEwAh3tSUJ-FGmFvwoJMkYGslvMpZN3IwLSJg%2Fedit%3Fgid%3D399342770&ltmpl=sheets&osid=1&passive=1209600&service=wise&ifkv=ARpgrqfO3CR8ZmHb-KUieioj9CbSZaMNkDrmuAKPllqt12KNYCWGkOja8NIqi4IFi8a3IQbCTdkm&ddm=0&flowName=GlifWebSignIn&flowEntry=ServiceLogin#gid=399342770",
-    status: "read",
-    read_at: "2023-11-25T22:51:51.000Z",
-  },
-  {
     url: "https://www.codechef.com/START152D?order=desc&sortBy=successful_submissions",
     status: "read",
     read_at: "2024-10-21T02:27:28.000Z",
@@ -145,11 +140,6 @@ export const seedData: {
     url: "https://www.codechef.com/START152D/problems/WFWIN",
     status: "later",
     created_at: "2024-09-18T01:29:42.000Z",
-  },
-  {
-    url: "https://accounts.google.com/InteractiveLogin/signinchooser?continue=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1srQ2MGSEwAh3tSUJ-FGmFvwoJMkYGslvMpZN3IwLSJg%2Fedit%3Fgid%3D0&followup=https%3A%2F%2Fdocs.google.com%2Fspreadsheets%2Fd%2F1srQ2MGSEwAh3tSUJ-FGmFvwoJMkYGslvMpZN3IwLSJg%2Fedit%3Fgid%3D0&ltmpl=sheets&osid=1&passive=1209600&service=wise&ifkv=ARpgrqc23ciWsnE2bibt96DVM1kdtzUWSgrbgRoTND1_FLuVoppQ9qz7H8NIRtRjzx2itj4x21TpkQ&ddm=0&flowName=GlifWebSignIn&flowEntry=ServiceLogin#gid=0",
-    status: "read",
-    read_at: "2024-08-01T11:40:21.000Z",
   },
   {
     url: "https://www.tle-eliminators.com/cp-sheet",
